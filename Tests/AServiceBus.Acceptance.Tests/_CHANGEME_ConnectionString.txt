@@ -1,0 +1,3 @@
+﻿Rename this file to ConnectionString.txt and fill with either the primary or secondary connection string from your Azure portal.
+
+ConnectionString.txt is ignored from git.

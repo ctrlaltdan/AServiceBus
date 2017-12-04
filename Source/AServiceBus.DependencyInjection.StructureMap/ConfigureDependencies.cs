@@ -1,4 +1,5 @@
-﻿using AServiceBus.Core;
+﻿using System.Reflection;
+using AServiceBus.Core;
 using AServiceBus.Core.Receiver;
 using StructureMap;
 
@@ -18,18 +19,22 @@ namespace AServiceBus.DependencyInjection.StructureMap
         {
             _container = container;
             
+            _resolver = new Resolver(_container);
+
+            Add(_resolver);
+        }
+
+        public IConfigureDependencies ScanForHandlers(Assembly assembly)
+        {
             _container.Configure(config =>
             {
                 config.Scan(_ =>
                 {
-                    _.AssembliesFromApplicationBaseDirectory();
+                    _.Assembly(assembly);
                     _.ConnectImplementationsToTypesClosing(typeof(IHandle<>));
                 });
             });
-            
-            _resolver = new Resolver(_container);
-
-            Add(_resolver);
+            return this;
         }
 
         public IConfigureDependencies Add<TConcrete>()

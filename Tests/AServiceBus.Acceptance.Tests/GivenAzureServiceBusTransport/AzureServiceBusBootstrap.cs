@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using AServiceBus.Acceptance.Tests.Framework.Events;
@@ -42,6 +43,7 @@ namespace AServiceBus.Acceptance.Tests.GivenAzureServiceBusTransport
             _resolver = ConfigureDependencies.Initialise()
                 .AddAzureServiceBusTransportProvider(azureConfiguration)
                 .AddCoreDependencies()
+                .ScanForHandlers(Assembly.GetExecutingAssembly())
                 .Build();
 
             var configurationBuilder = _resolver.GetInstance<BusConfigurationBuilder>();
