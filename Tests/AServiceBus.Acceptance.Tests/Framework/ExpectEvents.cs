@@ -7,12 +7,21 @@ using System.Threading.Tasks;
 
 namespace AServiceBus.Acceptance.Tests.Framework
 {
-    public class EventTesting
+    public class ExpectEvents
     {
-        private static readonly TimeSpan TimeoutPeriod = new TimeSpan(0, 0, 0, 20);
-        private readonly List<Task> _expectedEventChecks = new List<Task>();
-        
-        protected void SetEventExpectation<TEvent>(Func<TEvent, bool> predicate)
+        private static readonly TimeSpan TimeoutPeriod = TimeSpan.FromSeconds(5);
+        private readonly List<Task> _expectedEvents = new List<Task>();
+
+        public static ExpectEvents Create()
+        {
+            return new ExpectEvents();
+        }
+
+        private ExpectEvents()
+        {
+        }
+
+        public ExpectEvents OfType<TEvent>(Func<TEvent, bool> predicate)
         {
             var expectedEventCheck =
                 EventStore.Events
@@ -26,13 +35,21 @@ namespace AServiceBus.Acceptance.Tests.Framework
                     .Select(_ => Unit.Default)
                     .ToTask();
 
-            _expectedEventChecks.Add(expectedEventCheck);
+            _expectedEvents.Add(expectedEventCheck);
+            return this;
         }
 
-        protected void VerifyEventExpectations()
+        public bool AreReceived()
         {
-            Task.WaitAll(_expectedEventChecks.ToArray());
-            _expectedEventChecks.Clear();
+            try
+            {
+                Task.WhenAll(_expectedEvents).Wait();
+            }
+            catch (TimeoutException)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

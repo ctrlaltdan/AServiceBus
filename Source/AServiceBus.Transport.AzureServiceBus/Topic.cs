@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AServiceBus.Contracts;
 using AServiceBus.Core;
-using AServiceBus.Core.Domain;
+using AServiceBus.Core.Sender;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 

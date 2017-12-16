@@ -8,14 +8,16 @@ using NUnit.Framework;
 namespace AServiceBus.Acceptance.Tests.GivenAzureServiceBusTransport.WhenSendingCommand
 {
     [TestFixture]
-    public class ThenTheMessageIsReceivedByTheConsumerQueue : EventTesting
+    public class ThenTheMessageIsReceivedByTheConsumerQueue
     {
         [Test]
         public async Task Subject()
         {   
             var id = Guid.NewGuid();
 
-            SetEventExpectation<TestCommandV1>(x => x.Id == id);
+            var expectedEvents = ExpectEvents
+                .Create()
+                .OfType<TestCommandV1>(x => x.Id == id);
 
             var command = new TestCommandV1
             {
@@ -24,7 +26,7 @@ namespace AServiceBus.Acceptance.Tests.GivenAzureServiceBusTransport.WhenSending
 
             await AzureServiceBusBootstrap.Bus.SendAsync<TestQueue>(command);
             
-            VerifyEventExpectations();
+            Assert.That(expectedEvents.AreReceived);
         }
     }
 }

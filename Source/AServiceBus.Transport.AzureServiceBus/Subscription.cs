@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AServiceBus.Core.Domain;
+using AServiceBus.Core.Receiver;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 

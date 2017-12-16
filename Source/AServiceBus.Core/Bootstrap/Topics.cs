@@ -38,10 +38,5 @@ namespace AServiceBus.Core.Bootstrap
 
             return eventHandler;
         }
-
-        public ICollection<ITopic> GetBy(ICollection<Type> eventTypes)
-        {
-            return eventTypes.Select(GetBy).ToList();
-        }
     }
 }

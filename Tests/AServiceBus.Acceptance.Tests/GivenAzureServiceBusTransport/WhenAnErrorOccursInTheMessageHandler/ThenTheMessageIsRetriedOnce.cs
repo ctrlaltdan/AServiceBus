@@ -8,15 +8,17 @@ using NUnit.Framework;
 namespace AServiceBus.Acceptance.Tests.GivenAzureServiceBusTransport.WhenAnErrorOccursInTheMessageHandler
 {
     [TestFixture]
-    public class ThenTheMessageIsRetriedOnce : EventTesting
+    public class ThenTheMessageIsRetriedOnce
     {
         [Test]
         public async Task Subject()
         {
             var id = Guid.NewGuid();
 
-            SetEventExpectation<FailOnceV1>(x => x.Id == id && x.DeliveryAttempt == 1);
-            SetEventExpectation<FailOnceV1>(x => x.Id == id && x.DeliveryAttempt == 2);
+            var expectedEvents = ExpectEvents
+                .Create()
+                .OfType<FailOnceV1>(x => x.Id == id && x.DeliveryAttempt == 1)
+                .OfType<FailOnceV1>(x => x.Id == id && x.DeliveryAttempt == 2);
 
             var command = new FailOnceV1
             {
@@ -25,7 +27,7 @@ namespace AServiceBus.Acceptance.Tests.GivenAzureServiceBusTransport.WhenAnError
 
             await AzureServiceBusBootstrap.Bus.SendAsync<TestQueue>(command);
 
-            VerifyEventExpectations();
+            Assert.That(expectedEvents.AreReceived);
         }
     }
 }

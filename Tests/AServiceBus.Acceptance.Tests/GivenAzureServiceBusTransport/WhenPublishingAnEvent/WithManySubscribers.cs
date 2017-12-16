@@ -7,15 +7,17 @@ using NUnit.Framework;
 namespace AServiceBus.Acceptance.Tests.GivenAzureServiceBusTransport.WhenPublishingAnEvent
 {
     [TestFixture]
-    public class WithManySubscribers : EventTesting
+    public class WithManySubscribers
     {        
         [Test]
         public async Task ThenTheEventIsReceivedByAllSubscriberQueuesDerp()
         {
             var id = Guid.NewGuid();
 
-            SetEventExpectation<MultipleSubscribersEventV1>(x => x.Id == id && x.ReceivedCount == 1);
-            SetEventExpectation<MultipleSubscribersEventV1>(x => x.Id == id && x.ReceivedCount == 2);
+            var expectedEvents = ExpectEvents
+                .Create()
+                .OfType<MultipleSubscribersEventV1>(x => x.Id == id && x.ReceivedCount == 1)
+                .OfType<MultipleSubscribersEventV1>(x => x.Id == id && x.ReceivedCount == 2);
 
             var message = new MultipleSubscribersEventV1
             {
@@ -24,7 +26,7 @@ namespace AServiceBus.Acceptance.Tests.GivenAzureServiceBusTransport.WhenPublish
 
             await AzureServiceBusBootstrap.Bus.PublishAsync(message);
             
-            VerifyEventExpectations();
+            Assert.That(expectedEvents.AreReceived);
         }
     }
 }

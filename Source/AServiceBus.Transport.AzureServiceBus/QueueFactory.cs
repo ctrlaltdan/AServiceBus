@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AServiceBus.Contracts;
 using AServiceBus.Core.Bootstrap;
-using AServiceBus.Core.Domain;
+using AServiceBus.Core.Receiver;
 
 namespace AServiceBus.Transport.AzureServiceBus
 {
